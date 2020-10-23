@@ -1,0 +1,187 @@
+<!-- script代码，如果需要引用js文件，请使用与HTML中相同的方式。 -->
+<script type="text/javascript">
+    $(function(){
+    	var cglcFieldid = "field7778";//采购流程
+    	var htlcFieldid = "field7781";//合同流程
+    	var shlc1Fieldid = "field7782";//收货流程1
+    	var shlc2Fieldid = "field7784";//收货流程2
+    	var shlc3Fieldid = "field7785";//收货流程3
+    	var shlc4Fieldid = "field7786";//收货流程4
+    	var fklc1Fieldid = "field7783";//付款流程1
+    	var fklc2Fieldid = "field7787";//付款流程2
+    	var fklc3Fieldid = "field7788";//付款流程3
+    	var fklc4Fieldid = "field7789";//付款流程4
+    	
+    	var cglcValue = $("#"+cglcFieldid).val();
+    	var htlcValue = $("#"+htlcFieldid).val();
+    	var shlc1Value = $("#"+shlc1Fieldid).val();
+    	var shlc2Value = $("#"+shlc2Fieldid).val();
+    	var shlc3Value = $("#"+shlc3Fieldid).val();
+    	var shlc4Value = $("#"+shlc4Fieldid).val();
+    	var fklc1Value = $("#"+fklc1Fieldid).val();
+    	var fklc2Value = $("#"+fklc2Fieldid).val();
+    	var fklc3Value = $("#"+fklc3Fieldid).val();
+    	var fklc4Value = $("#"+fklc4Fieldid).val();
+    	console.log(htlcValue+","+shlc1Value+","+shlc2Value+","+shlc3Value+","+shlc4Value+","+fklc1Value+","+fklc2Value+","+fklc3Value+","+fklc4Value);
+    	if(cglcValue==""){
+    		$("#cgTitle").html("<b>采购</b>").css({"text-align":"center","color":"gray"});
+    	}else{
+    		$("#cgTitle").html("<b>采购</b>").css({"text-align":"center","color":"green"});
+    		$(".cgDetail").children("span").removeClass();
+    		$(".cgDetail").children("span").css({"display":"inline-block","color":"green"});
+    		$("#cgPic").parent().attr("class","td_edesign td_etype_6 mainTd_2_1");
+    	}
+    	if(htlcValue==""){
+    		$("#htTitle").html("<b>合同</b>").css({"text-align":"center","color":"gray"});
+    		$("#cg2ht").children("span").css("color","gray");
+    		$(".htDetail").hide();
+    		$(".htDetail").parent().removeClass();
+    		$("#NoHtDiv").html("<span>未开始</span>").css("text-align","center");
+    	}else{
+    		$("#htTitle").html("<b>合同</b>").css({"text-align":"center","color":"green"});
+    		$("#cg2ht").html("<b>>>>></b>").css({"text-align":"center","color":"green"});
+    		$(".htDetail").children("span").removeClass();
+    		$(".htDetail").children("span").css({"display":"inline-block","color":"green"});
+    		$("#htPic").parent().attr("class","td_edesign td_etype_6 mainTd_2_1");
+    	}
+    	
+    	
+    	var shlcValues = (shlc1Value?shlc1Value:"0")+","+(shlc2Value?shlc2Value:"0")+","+(shlc3Value?shlc3Value:"0")+","+(shlc4Value?shlc4Value:"0");
+    	var fklcValues = (fklc1Value?fklc1Value:"0")+","+(fklc2Value?fklc2Value:"0")+","+(fklc3Value?fklc3Value:"0")+","+(fklc4Value?fklc4Value:"0");
+    	
+    	console.log(shlcValues+"----"+fklcValues);
+    	//获取收货验收数据
+    	var returnData="";
+    	jQuery.ajax({
+			url: "/msdev/jhswyy/cggl/jsp/cgywsmzq.jsp", 
+			type: "post",
+			async: false,
+			processData: false,
+			data: "shlcValues="+shlcValues+"&fklcValues="+fklcValues,
+			dataType: "text",
+			success: function do4Success(msg) {
+				returnData = msg.trim(/^\s+|\s+$/g, "");
+				console.log(returnData);
+			}
+		}); 
+		returnData = jQuery.parseJSON(returnData);
+		console.log(returnData);
+		//收货流程
+		if((returnData.shlc1)[0]!="0"){
+			$("#shlcBh1").parent().attr("class","td_edesign td_etype_13 mainTd_6_1");
+			$("#shlcBh1").html("<span>"+(returnData.shlc1)[0]+"</span>").css({"text-align":"center","color":"green"});
+			$("#shlcRq1").parent().attr("class","td_edesign td_etype_0 mainTd_8_1");
+			$("#shlcRq1").html("<span>开始日期 "+(returnData.shlc1)[1]+"</span>").css({"text-align":"center","color":"green"});
+		}
+		if((returnData.shlc2)[0]!="0"){
+			$("#sh1Tosh2").parent().attr("class","td_edesign td_etype_0 mainTd_8_1");
+			$("#sh1Tosh2").html("<span>>>>></span>").css({"text-align":"center","color":"green"});
+			$("#shlcBh2").parent().attr("class","td_edesign td_etype_0 mainTd_8_1");
+			$("#shlcBh2").html("<span>"+(returnData.shlc2)[0]+"</span>").children("span").css({"text-align":"center","color":"green"});
+			$("#shlcRq2").parent().attr("class","td_edesign td_etype_0 mainTd_8_1");
+			$("#shlcRq2").html("<span>开始日期 "+(returnData.shlc2)[1]+"</span>").children("span").css({"text-align":"center","color":"green"});
+		}else{
+			$("#sh1Tosh2").parent().attr("class","td_edesign td_etype_0 mainTd_8_1");
+			$("#sh1Tosh2").html("<span>>>>></span>").children("span").css({"text-align":"center","color":"gray"});
+			$("#shlcBh2").parent().attr("class","td_edesign td_etype_0 mainTd_8_1");
+			$("#shlcBh2").html("<span>无</span>").children("span").css({"text-align":"center","color":"gray"});
+		}
+		if((returnData.shlc3)[0]!="0"){
+			$("#sh2Tosh3").parent().attr("class","td_edesign td_etype_0 mainTd_8_1");
+			$("#sh2Tosh3").html("<span>>>>></span>").css({"text-align":"center","color":"green"});
+			$("#shlcBh3").parent().attr("class","td_edesign td_etype_0 mainTd_8_1");
+			$("#shlcBh3").html("<span>"+(returnData.shlc3)[0]+"</span>").children("span").css({"text-align":"center","color":"green"});
+			$("#shlcRq3").parent().attr("class","td_edesign td_etype_0 mainTd_8_1");
+			$("#shlcRq3").html("<span>开始日期 "+(returnData.shlc3)[1]+"</span>").children("span").css({"text-align":"center","color":"green"});
+		}else{
+			$("#sh2Tosh3").parent().attr("class","td_edesign td_etype_0 mainTd_8_1");
+			$("#sh2Tosh3").html("<span>>>>></span>").children("span").css({"text-align":"center","color":"gray"});
+			$("#shlcBh3").parent().attr("class","td_edesign td_etype_0 mainTd_8_1");
+			$("#shlcBh3").html("<span>无</span>").children("span").css({"text-align":"center","color":"gray"});
+		}
+		if((returnData.shlc4)[0]!="0"){
+			$("#sh3Tosh4").parent().attr("class","td_edesign td_etype_0 mainTd_8_1");
+			$("#sh3Tosh4").html("<span>>>>></span>").css({"text-align":"center","color":"green"});
+			$("#shlcBh4").parent().attr("class","td_edesign td_etype_0 mainTd_8_1");
+			$("#shlcBh4").html("<span>"+(returnData.shlc4)[0]+"</span>").children("span").css({"text-align":"center","color":"green"});
+			$("#shlcRq4").parent().attr("class","td_edesign td_etype_0 mainTd_8_1");
+			$("#shlcRq4").html("<span>开始日期 "+(returnData.shlc4)[1]+"</span>").children("span").css({"text-align":"center","color":"green"});
+		}else{
+			$("#sh3Tosh4").parent().attr("class","td_edesign td_etype_0 mainTd_8_1");
+			$("#sh3Tosh4").html("<span>>>>></span>").children("span").css({"text-align":"center","color":"gray"});
+			$("#shlcBh4").parent().attr("class","td_edesign td_etype_0 mainTd_8_1");
+			$("#shlcBh4").html("<span>无</span>").children("span").css({"text-align":"center","color":"gray"});
+		}
+		//付款流程
+		if((returnData.fklc1)[0]!="0"){
+			$("#fklcBh1").parent().attr("class","td_edesign td_etype_0 mainTd_6_1");
+			$("#fklcBh1").html("<span>"+(returnData.fklc1)[0]+"</span>").css({"text-align":"center","color":"green"});
+			$("#fklcRq1").parent().attr("class","td_edesign td_etype_0 mainTd_8_1");
+			$("#fklcRq1").html("<span>开始日期 "+(returnData.fklc1)[1]+"</span>").css({"text-align":"center","color":"green"});
+		}
+		if((returnData.fklc2)[0]!="0"){
+			$("#fk1Tofk2").parent().attr("class","td_edesign td_etype_0 mainTd_8_1");
+			$("#fk1Tofk2").html("<span>>>>></span>").css({"text-align":"center","color":"green"});
+			$("#fklcBh2").parent().attr("class","td_edesign td_etype_0 mainTd_8_1");
+			$("#fklcBh2").html("<span>"+(returnData.fklc2)[0]+"</span>").children("span").css({"text-align":"center","color":"green"});
+			$("#fklcRq2").parent().attr("class","td_edesign td_etype_0 mainTd_8_1");
+			$("#fklcRq2").html("<span>开始日期 "+(returnData.fklc2)[1]+"</span>").children("span").css({"text-align":"center","color":"green"});
+		}else{
+			$("#fk1Tofk2").parent().attr("class","td_edesign td_etype_0 mainTd_8_1");
+			$("#fk1Tofk2").html("<span>>>>></span>").children("span").css({"text-align":"center","color":"gray"});
+			$("#fklcBh2").parent().attr("class","td_edesign td_etype_0 mainTd_8_1");
+			$("#fklcBh2").html("<span>无</span>").children("span").css({"text-align":"center","color":"gray"});
+		}
+		if((returnData.fklc3)[0]!="0"){
+			$("#fk2Tofk3").parent().attr("class","td_edesign td_etype_0 mainTd_8_1");
+			$("#fk2Tofk3").html("<span>>>>></span>").css({"text-align":"center","color":"green"});
+			$("#fklcBh3").parent().attr("class","td_edesign td_etype_0 mainTd_8_1");
+			$("#fklcBh3").html("<span>"+(returnData.fklc3)[0]+"</span>").children("span").css({"text-align":"center","color":"green"});
+			$("#fklcRq3").parent().attr("class","td_edesign td_etype_0 mainTd_8_1");
+			$("#fklcRq3").html("<span>开始日期 "+(returnData.fklc3)[1]+"</span>").children("span").css({"text-align":"center","color":"green"});
+		}else{
+			$("#fk2Tofk3").parent().attr("class","td_edesign td_etype_0 mainTd_8_1");
+			$("#fk2Tofk3").html("<span>>>>></span>").children("span").css({"text-align":"center","color":"gray"});
+			$("#fklcBh3").parent().attr("class","td_edesign td_etype_0 mainTd_8_1");
+			$("#fklcBh3").html("<span>无</span>").children("span").css({"text-align":"center","color":"gray"});
+		}
+		if((returnData.fklc4)[0]!="0"){
+			$("#fk3Tofk4").parent().attr("class","td_edesign td_etype_0 mainTd_8_1");
+			$("#fk3Tofk4").html("<span>>>>></span>").css({"text-align":"center","color":"green"});
+			$("#fklcBh4").parent().attr("class","td_edesign td_etype_0 mainTd_8_1");
+			$("#fklcBh4").html("<span>"+(returnData.fklc4)[0]+"</span>").children("span").css({"text-align":"center","color":"green"});
+			$("#fklcRq4").parent().attr("class","td_edesign td_etype_0 mainTd_8_1");
+			$("#fklcRq4").html("<span>开始日期 "+(returnData.fklc4)[1]+"</span>").children("span").css({"text-align":"center","color":"green"});
+		}else{
+			$("#fk3Tofk4").parent().attr("class","td_edesign td_etype_0 mainTd_8_1");
+			$("#fk3Tofk4").html("<span>>>>></span>").children("span").css({"text-align":"center","color":"gray"});
+			$("#fklcBh4").parent().attr("class","td_edesign td_etype_0 mainTd_8_1");
+			$("#fklcBh4").html("<span>无</span>").children("span").css({"text-align":"center","color":"gray"});
+		}
+		
+		
+		if(shlc1Value==""){
+    		$("#shTitle").html("<b>收货</b>").css({"text-align":"center","color":"gray"});
+    		$("#ht2sh").children("span").css("color","gray");
+    		$(".shDetail").hide();
+    		$(".shDetail").parent().removeClass();
+    		$("#NoShDiv").html("<span>未开始</span>").css("text-align","center");
+    	}else{
+    		$("#shTitle").html("<b>收货</b>").css({"text-align":"center","color":"green"});
+    		$("#ht2sh").html("<b>>>>></b>").css({"text-align":"center","color":"green"});
+    		$("#shPic").parent().attr("class","td_edesign td_etype_6 mainTd_2_1");
+    	}
+    	if(fklc1Value==""){
+    		$("#fkTitle").html("<b>付款</b>").css({"text-align":"center","color":"gray"});
+    		$("#sh2fk").children("span").css("color","gray");
+    		$(".fkDetail").hide();
+    		$(".fkDetail").parent().removeClass();
+    		$("#NoFkDiv").html("<span>未开始</span>").css("text-align","center");
+    	}else{
+    		$("#fkTitle").html("<b>付款</b>").css({"text-align":"center","color":"green"});
+    		$("#sh2fk").html("<b>>>>></b>").css({"text-align":"center","color":"green"});
+    		$("#fkPic").parent().attr("class","td_edesign td_etype_6 mainTd_2_1");
+    	}
+		
+    })
+</script>

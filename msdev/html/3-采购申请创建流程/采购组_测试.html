@@ -1,0 +1,66 @@
+<!-- script代码，如果需要引用js文件，请使用与HTML中相同的方式。 -->
+<script type="text/javascript">
+	
+	var ddbhFiledId = 'field9130'; //采购数量    
+	var numberId = 'field7393'; //数量
+	var caigoudwId = 'field9129'; //采购单位
+	var jibendwId = 'field6704'; //基本单位
+	var  wlbhId = 'field6942'; //物料编号
+    var  cgdwdjId = 'field7466'; //采购单位单价（未税）
+    var  danjiaId = 'field7523';//单价
+  $(function(){	
+ 	var dtlval = $("#submitdtlid0").val();
+	var dtlStr=dtlval.split(",");
+	console.log("dtlval="+dtlval);
+	console.log("dtlStr.length="+dtlStr.length);
+	for(var k = 0;k<dtlStr.length;k++){
+		(function(k){
+			  $("#" + danjiaId+"_"+dtlStr[k]).blur(function(){
+			 
+		       var ddbhFiled = jQuery("#" + ddbhFiledId+"_"+dtlStr[k]).val();//采购数量  
+			   // alert("采购数量"+ddbhFiled)
+            	var wlbh = jQuery("#" + wlbhId+"_"+dtlStr[k]).val();// 物料编号
+				var danjia = jQuery("#" + danjiaId+"_"+dtlStr[k]).val();//单价
+			//alert("读取数据中...");
+			//带出保单相关明细
+			var returnData = "";//返回值
+			var jbdw = "";//基本单位
+		    var cgdw = "";//采购单位
+		   var shul ="";//数量 
+		   var cgdwdj="";//采购单位单价（未税）
+				jQuery.ajax({
+				url: "/msdev/jhswyy/sap/jsp/UnitConversion.jsp", 
+				type: "post",
+				async: false,
+				processData: false,
+				data: "wlbh="+wlbh+"&caigousls="+ddbhFiled+"&danjia="+danjia,
+				dataType: "text",
+				success: function do4Success(msg) {
+					returnData = msg.trim(/^\s+|\s+$/g, "");
+					  returnData = returnData.split(",");
+					  
+					 shul =returnData[0];					 
+					 cgdwdj = returnData[1];
+	
+			         jQuery("#" + numberId+"_"+dtlStr[k]).val(shul);
+					 jQuery("#" + cgdwdjId+"_"+dtlStr[k]).val(cgdwdj);
+					 
+						
+				}
+			});  			       		
+		});
+				
+		})(k);
+	}
+  
+  });
+
+	
+</script>
+
+
+
+
+
+
+

@@ -1,0 +1,19 @@
+<script type="text/javascript">
+jQuery(document).ready(function() { 
+	$("#buttonDiv").append("<input id='exportid' type='button' class='e8_btn_top_first'   value='导出' />");
+	var curr_requestid= $("#requestid").val();
+	var form=$("<form>");
+	form.attr("style","display:none");
+	form.attr("method","post");
+	form.attr("action","/servlet/SaveExcelService");
+	var input1=$("<input>");
+	input1.attr("type","hidden");
+	input1.attr("name","requestid");
+	input1.attr("value",curr_requestid);
+	$("body").append(form);
+	form.append(input1);
+	$("#exportid").click(function(){
+      form.submit();
+  });
+});
+</script>

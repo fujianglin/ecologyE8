@@ -1,0 +1,273 @@
+<!-- script代码，如果需要引用js文件，请使用与HTML中相同的方式。 -->
+<script type="text/javascript">
+	
+	var ddbhFiledId = 'field9130'; //采购数量    
+	var numberId = 'field7393'; //数量
+	var caigoudwId = 'field9129'; //采购单位
+	var jibendwId = 'field6704'; //基本单位(单位)
+	var  wlbhId = 'field6942'; //物料编号
+    var  cgdwdjId = 'field7466'; //采购单位单价（未税）
+    var  danjiaId = 'field7523';//单价
+	var  cglxId = 'field8887';//采购类型
+	
+	//归口管理部门
+	var d_gkglbmFieldId = "9108";
+	//申请部门
+	var sqbmFieldId = "6305";
+	//预算年份
+	var d_bugetyearFieldId = "7568";
+	//成本中心
+	var d_cbzxFieldId = "6714";
+	//费用科目
+	var d_GLAccountFieldId = "7260";
+	//预算明细
+	var d_ysmxFieldId = "8976";
+	//采购总价格（未税）  
+	var d_cgzjgFieldId = "7467";
+    jQuery(document).ready(function () {
+    	checkCustomize = function (){
+			//1.获取明细的行数
+			var indexnum0 = 0;
+			if(document.getElementById("indexnum0")){
+				indexnum0 = document.getElementById("indexnum0").value * 1.0 - 1;
+			}
+            var dataCheckStr = "";
+			for(var i=0;i<indexnum0+1;i++){
+				var sqbm = jQuery("#field"+sqbmFieldId).val();
+				var gkglbm = jQuery("#field"+d_gkglbmFieldId +"_"+i).val();
+				//如果归口管理部门不是申请部门，则不能提交
+				//console.log(gkglbm);
+				//console.log(sqbm);
+				if(gkglbm!=0 && gkglbm!=sqbm){
+					alert("归口管理部门和申请部门不一致");
+					return false;
+				}
+				//成本中心可用预算大于0
+				var bugetyear = jQuery("#field"+d_bugetyearFieldId +"_"+i).val();
+				var cbzx = jQuery("#field"+d_cbzxFieldId +"_"+i).val();
+				var GLAccount = jQuery("#field"+d_GLAccountFieldId +"_"+i).val();
+				var ysmx = jQuery("#field"+d_ysmxFieldId +"_"+i).val();
+				var cgzjg = jQuery("#field"+d_cgzjgFieldId +"_"+i).val();
+				if(i==0){
+					dataCheckStr = bugetyear+","+cbzx+","+GLAccount+","+ysmx+","+0;
+				}else{
+					dataCheckStr += "|"+bugetyear+","+cbzx+","+GLAccount+","+ysmx+","+0;
+				}
+			}
+			var checkVal = checkFna(dataCheckStr);
+			//1 成本中心预算<=0  2 预算明细预算<=0 3 两个都<=0
+			if(checkVal==""){
+				return true;
+			}else if(checkVal=="1"){
+				alert("成本中心预算不足!");
+				return false;
+			}else if(checkVal=="2"){
+				//alert("预算明细预算<=0!");
+				///return false;
+				return true;
+			}else if(checkVal=="3"){
+				//alert("成本中心预算和预算明细预算<=0!");
+				alert("成本中心预算不足!");
+				return false;
+			}
+			
+			return true;
+			//alert("归口管理部门和申请部门一致");
+        }
+        
+        //确认
+		function checkFna(dataCheckStr){
+			var returnVal = "";
+			jQuery.ajax({
+				url : "/msdev/jhswyy/fna/CheckFnaGreaterThanZero.jsp",
+				type : "post",
+				async : false,
+				processData : false,
+				data : "dataCheckStr="+dataCheckStr,
+				dataType : "html",
+				success: function do4Success(msg){ 
+					returnVal = msg.trim();
+				}
+			});	
+			return returnVal;
+		}
+        
+    })
+	
+  //保存之后出发
+  jQuery(function(){
+	jQuery("button[name='addbutton0']").bind("click",function(){
+		detailchangeX(1); 
+    });
+    detailchangeX(2);
+
+});
+
+function detailchangeX(xh){
+	if(xh==1){
+		var indexnum0 = jQuery("#indexnum0").val() * 1.0 - 1;
+			
+		      //物料编号触发获取采购单位和订单单位
+			  $("#" + cglxId+"_"+indexnum0).bindPropertyChange(function(){
+			  var cglx = $("#" + cglxId+"_"+indexnum0).val();
+			  if(cglx=="2"||cglx=="1"){
+			   $("#" + wlbhId+"_"+indexnum0).val("4000001831");
+			    $("#" + wlbhId+"_"+indexnum0+"span").html("4000001831");
+			  }
+			  
+			 });
+			  $("#" + wlbhId+"_"+indexnum0).bindPropertyChange(function(){
+            var wlbh = jQuery("#" + wlbhId+"_"+indexnum0).val();// 物料编号	
+			var returnData = "";//返回值
+			var jbdw = "";//基本单位
+		    var cgdw = "";//采购单位
+			
+			jQuery.ajax({
+				url: "/msdev/jhswyy/sap/jsp/getDanWei.jsp", 
+				type: "post",
+				async: false,
+				processData: false,
+				data: "wlbh="+wlbh,
+				dataType: "text",
+				success: function do4Success(msg) {
+					returnData = msg.trim(/^\s+|\s+$/g, "");
+					
+					  returnData = returnData.split(",");
+					  
+					  jbdw = returnData[0];
+					  cgdw = returnData[1];
+					 jQuery("#" + jibendwId+"_"+indexnum0).val(jbdw);
+			         jQuery("#" + jibendwId+"_"+indexnum0+"span").html(jbdw);
+			         jQuery("#" + caigoudwId+"_"+indexnum0).val(cgdw);
+                     				 
+						
+				}
+			});  			       		
+		    }); 
+		     $("#" + ddbhFiledId+"_"+indexnum0).blur(function(){
+			 
+		       var ddbhFiled = jQuery("#" + ddbhFiledId+"_"+indexnum0).val();//采购数量  
+			  
+            	var wlbh = jQuery("#" + wlbhId+"_"+indexnum0).val();// 物料编号
+			
+			//带出保单相关明细
+			var returnData = "";//返回值
+		   var shul ="";//数量 
+		   var cgdwdj="";//采购单位单价（未税）
+				jQuery.ajax({
+				url: "/msdev/jhswyy/sap/jsp/GetNumber.jsp", 
+				type: "post",
+				async: false,
+				processData: false,
+				data: "wlbh="+wlbh+"&caigousls="+ddbhFiled,
+				dataType: "text",
+				success: function do4Success(msg) {
+					returnData = msg.trim(/^\s+|\s+$/g, "");
+					returnData = returnData.split(",");
+					 shul =returnData[0];					 		
+			         jQuery("#" + numberId+"_"+indexnum0).val(shul);	 
+						
+				}
+			});  			       		
+		});
+	}else{
+			   $("#" + cglxId+"_"+indexnum0).bindPropertyChange(function(){
+			  var cglx = $("#" + cglxId+"_"+indexnum0).val();
+			  if(cglx=="2"||cglx=="1"){
+			   $("#" + wlbhId+"_"+indexnum0).val("4000001831");
+			    $("#" + wlbhId+"_"+indexnum0+"span").html("4000001831");
+			  }
+			  
+			 });
+			  $("#" + wlbhId+"_"+indexnum0).bindPropertyChange(function(){
+            var wlbh = jQuery("#" + wlbhId+"_"+indexnum0).val();// 物料编号	
+			var returnData = "";//返回值
+			var jbdw = "";//基本单位
+		    var cgdw = "";//采购单位
+			jQuery.ajax({
+				url: "/msdev/jhswyy/sap/jsp/getDanWei.jsp", 
+				type: "post",
+				async: false,
+				processData: false,
+				data: "wlbh="+wlbh,
+				dataType: "text",
+				success: function do4Success(msg) {
+					returnData = msg.trim(/^\s+|\s+$/g, "");
+					  returnData = returnData.split(",");  
+					  jbdw = returnData[0];
+					  cgdw = returnData[1];
+					 jQuery("#" + jibendwId+"_"+indexnum0).val(jbdw);
+			         jQuery("#" + jibendwId+"_"+indexnum0+"span").html(jbdw);
+			         jQuery("#" + caigoudwId+"_"+indexnum0).val(cgdw);
+                     				 
+						
+				}
+			});  			       		
+		});
+		     $("#" + ddbhFiledId+"_"+indexnum0).blur(function(){
+			 
+		       var ddbhFiled = jQuery("#" + ddbhFiledId+"_"+indexnum0).val();//采购数量  
+			  
+            	var wlbh = jQuery("#" + wlbhId+"_"+indexnum0).val();// 物料编号
+				
+			
+			//带出保单相关明细
+			var returnData = "";//返回值
+		   var shul ="";//数量 
+		   var cgdwdj="";//采购单位单价（未税）
+				jQuery.ajax({
+				url: "/msdev/jhswyy/sap/jsp/GetNumber.jsp", 
+				type: "post",
+				async: false,
+				processData: false,
+				data: "wlbh="+wlbh+"&caigousls="+ddbhFiled,
+				dataType: "text",
+				success: function do4Success(msg) {
+					returnData = msg.trim(/^\s+|\s+$/g, "");
+					returnData = returnData.split(",");
+					
+					 shul =returnData[0];					 
+		
+			         jQuery("#" + numberId+"_"+indexnum0).val(shul); 
+						
+				}
+			});  			       		
+		});			
+		
+	}
+  
+  }	
+
+</script>
+
+ <script type="text/javascript">
+ var d_zwmcFid="field8790";//行项目
+
+ $("#submitdtlid0").bindPropertyChange(function(){	
+ 	var dtlval = $("#submitdtlid0").val();
+	
+	var dtlStr=dtlval.split(",");
+	var see = 10;
+	for(var k = 0;k<dtlStr.length;k++){
+		(function(k){			
+			    $("#"+d_zwmcFid+"_"+dtlStr[k]).val(see);
+				 see = see+10;
+			
+		})(k);
+	}
+});     
+
+
+</script>	
+
+
+
+
+
+
+
+
+
+
+
+

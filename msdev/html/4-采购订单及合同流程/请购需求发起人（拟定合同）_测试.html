@@ -1,0 +1,56 @@
+<script type="text/javascript">
+    jQuery(document).ready(function () {
+        jQuery(".searchm").append("<input type='button' value='查询' name='searchbtn' onclick='search_sapjh(this)' id='searchbtn'/>");
+        //jQuery("[name=addbutton0]").click(function(){
+        //	jQuery("#oTable0").find("tr:last-child").find(".searchdt").append("<input type='button' value='查询' name='searchbtn' onclick='search(this)' id='searchbtn'/>");
+        //	jQuery("#oTable0").find("tr:last-child").find(".searchdt").find("input[type=text]").css("width","70%");
+        //})
+        //setTimeout(addSearch,1000);
+        
+        //采购订单及合同判断
+        var htjkField = "field6587";//合同价款
+		var ddjeField = "field6589";//订单金额
+		checkCustomize = function (){
+			var htjk = $("#"+htjkField).val();
+			var ddje = $("#"+ddjeField).val();
+			var ce = htjk-ddje;  //差额
+			alert(ce);
+			if(ce>1 || ce<-1){
+				alert("合同价款和订单金额不符！");
+				return false;
+			}else{
+				return true;
+			}
+		}
+    })
+    
+    //function addSearch(){
+    //	jQuery("#oTable0").find("[_target=datarow]").each(function(index,val){
+    //    	jQuery(val).find(".searchdt").append("<input type='button' value='查询' name='searchbtn' onclick='search(this)' id='searchbtn'/>");
+    //    	jQuery(val).find(".searchdt").find("input[type=text]").css("width","70%");
+    //    })
+    //}
+
+
+    function search_sapjh(obj) {
+    	//var index = jQuery(obj).parent().parent().attr("_rowindex");
+        var dialog = new window.top.Dialog();
+        dialog.currentWindow = window;
+        //dialog.callbackfunParam = null;
+        dialog.URL = "/systeminfo/BrowserMain.jsp?url=/formmode/apps/jiahe/SapBrowser.jsp?sapBrowserType=PurchaseOrder";
+        dialog.callbackfun = function (paramobj, id1) {
+               jQuery("#field6730").val(id1.PurchaseOrder);
+               jQuery("#field6589").val(id1.ConditionAmount);
+               jQuery("#field6730").trigger("change");
+               jQuery("#field6589").trigger("change");
+
+              jQuery("#field6589"+"span").html(id1.ConditionAmount);
+
+        }
+        dialog.Title = "请选择";//请选择
+        dialog.Width = 800 ;
+        dialog.Height = 600;
+			dialog.Drag = true;
+            dialog.show();
+    }
+</script>

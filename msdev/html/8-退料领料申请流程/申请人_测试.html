@@ -1,0 +1,120 @@
+<!-- script代码，如果需要引用js文件，请使用与HTML中相同的方式。 -->
+<script type="text/javascript">
+	var ddbhFiledId = 'field9107'; //订单编号    主表数据
+	var sccpph = 'field9083'; //生产/产品批号
+	var scgcId = 'field9126'; //生产工厂   
+    var Material_01Id = 'field9127'; //生产物料 
+	var sjlyId ="field9120";//数据来源           
+    
+	var MaterialId = 'field9119';//物料编号       明细数据
+	var RequiredQuantityId ='field9278';//需求量
+	
+	var MatlWrhsStkQtyInMatlBaseUniId='field9112';//库存数量
+	var MaterialBaseUnitId='field9118';//基本计量单位
+	var kykcId='field9121';//可用库存数量
+	var djkcId='field9122';//待检库存数量
+
+	var Batch_01Id = 'field9105';//批次
+    jQuery(document).ready(function () {
+		var flag = true;
+        $("#" + ddbhFiledId).blur(function(){
+			
+			if(flag){
+				var ddbh =  $(this).val(); //订单编号
+			$("#" + ddbhFiledId).attr("readonly","true");
+			$("#" + ddbhFiledId).css("background","#eee"); 
+			alert("读取数据中...");
+			//带出保单相关明细
+			var returnResult = "";
+			jQuery.ajax({
+				url: "/msdev/jhswyy/sap/jsp/lltlSap.jsp", 
+				type: "post",
+				async: false,
+				processData: false,
+				data: "ddbh=" + ddbh,
+				dataType: "text",
+				success: function do4Success(msg) {
+					msg = msg.trim(/^\s+|\s+$/g, "");
+					returnResult = msg;
+					//alert(returnResult);
+					console.log("后台传来的数据="+returnResult);
+					
+				}
+			});
+			var  resultJson  = JSON.parse(returnResult);
+			var  pici="";//生产/产品批号
+			var  scwl="";//生产物料
+			var scgc="";//生产工厂
+			console.log("json数据："+returnResult);
+			console.log(resultJson.length);
+			for(var i=0;i<resultJson.length;i++){
+				addRow1(1); 
+				var RequiredQuantity = resultJson[i].finalQuantity   //需求量
+			
+				var Material = resultJson[i].Material;		//物料号
+			
+	            var MatlWrhsStkQtyInMatlBaseUni=resultJson[i].MatlWrhsStkQtyInMatlBaseUni;//库存数量
+	            var EntryUnit=resultJson[i].EntryUnit;//条目单位
+				var MaterialBaseUnit = resultJson[i].MaterialBaseUnit //基本计量单位
+				if(typeof(MaterialBaseUnit) == "undefined"){
+				MaterialBaseUnit="";
+				}
+	            var kykc=resultJson[i].kykc;//可用库存数量
+				kykc=kykc+" "+MaterialBaseUnit;
+	            var djkc=resultJson[i].djkc;//待检库存数量
+				djkc=djkc+" "+MaterialBaseUnit
+	            var Material_01 =resultJson[i].Material_01;//生产物料
+	            var Batch_01 = resultJson[i].Batch_01;//批次
+			    scgc = resultJson[i].ProductionPlant;//生产工厂
+				pici= resultJson[i].CharcValue;		//内部批次号
+				scwl = resultJson[i].Material_01;//生产物料
+				console.log("Material="+Material);
+				jQuery("#" + RequiredQuantityId + "_" + i).val(RequiredQuantity);
+				
+				jQuery("#" + MaterialId + "_" + i+"span").html(Material);
+				jQuery("#" + MaterialId + "_" + i).val(Material);
+				
+				jQuery("#" + MatlWrhsStkQtyInMatlBaseUniId + "_" + i).val(MatlWrhsStkQtyInMatlBaseUni);
+				jQuery("#" + MaterialBaseUnitId + "_" + i).val(EntryUnit);
+				jQuery("#" + kykcId + "_" + i).val(kykc);
+				jQuery("#" + djkcId + "_" + i).val(djkc);
+				
+				jQuery("#" + Batch_01Id + "_" + i).val(Batch_01);
+				
+			}
+			       
+				  jQuery("#" + sccpph).val(pici);//批次
+				  jQuery("#" + Material_01Id).val(scwl);//生产物料  
+				  if("4100"==scgc){
+				  
+				   document.getElementById(scgcId).value = "1";
+				  }else{
+				  
+				    document.getElementById(scgcId).value = "0";
+				  }
+				  
+				  flag = false;
+			}
+			
+				  
+			
+		
+		});
+		$("#"+sjlyId).bindPropertyChange(function(){
+		  
+            var status = 1;
+            var cleanmx = "#indexnum" + status; //1.得到需要将累计值清0的明细表
+            var allcheck = "input[name='check_node_" + status + "']"; //2.得到该明细表多选框ID
+            var delallcheck = eval("deleteRow" + status); //3.得到该明细表的删除方法
+            $(allcheck).attr("checked", "true"); //4.选中明细表所有数据
+            new delallcheck(status, true); //5.删除选中的明细
+            $(cleanmx).val(0); //6.清空该明细表的累加值
+        
+		  
+		   
+		   }
+		   
+		   )
+	})
+	
+</script>

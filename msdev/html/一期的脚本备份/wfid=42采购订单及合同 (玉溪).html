@@ -1,0 +1,40 @@
+<script type="text/javascript">
+    jQuery(document).ready(function () {
+        jQuery(".searchm").append("<input type='button' value='查询' name='searchbtn' onclick='search_sapjh(this)' id='searchbtn'/>");
+        //jQuery("[name=addbutton0]").click(function(){
+        //	jQuery("#oTable0").find("tr:last-child").find(".searchdt").append("<input type='button' value='查询' name='searchbtn' onclick='search(this)' id='searchbtn'/>");
+        //	jQuery("#oTable0").find("tr:last-child").find(".searchdt").find("input[type=text]").css("width","70%");
+        //})
+        //setTimeout(addSearch,1000);
+    })
+    
+    //function addSearch(){
+    //	jQuery("#oTable0").find("[_target=datarow]").each(function(index,val){
+    //    	jQuery(val).find(".searchdt").append("<input type='button' value='查询' name='searchbtn' onclick='search(this)' id='searchbtn'/>");
+    //    	jQuery(val).find(".searchdt").find("input[type=text]").css("width","70%");
+    //    })
+    //}
+
+
+    function search_sapjh(obj) {
+    	//var index = jQuery(obj).parent().parent().attr("_rowindex");
+        var dialog = new window.top.Dialog();
+        dialog.currentWindow = window;
+        //dialog.callbackfunParam = null;
+        dialog.URL = "/systeminfo/BrowserMain.jsp?url=/formmode/apps/jiahe/SapBrowser.jsp?sapBrowserType=PurchaseOrder";
+        dialog.callbackfun = function (paramobj, id1) {
+        	jQuery("#field7141").val(id1.PurchaseOrder);
+        	jQuery("#field7128").val(id1.ConditionAmount);
+            jQuery("#field7141").trigger("change");
+            jQuery("#field7128").trigger("change");
+
+        }
+        dialog.Title = "请选择";//请选择
+        dialog.Width = 800 ;
+        dialog.Height = 600;
+			dialog.Drag = true;
+            dialog.show();
+    }
+</script>
+
+

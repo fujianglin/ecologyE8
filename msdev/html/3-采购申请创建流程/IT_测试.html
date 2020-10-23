@@ -1,0 +1,39 @@
+<!-- script代码，如果需要引用js文件，请使用与HTML中相同的方式。 -->
+<script type="text/javascript">
+jQuery(document).ready(function () {
+	//成本中心CostCenter
+	var d_CostCenterFieldId = "8295";
+	//费用科目GLAccount
+	var d_GLAccountFieldId = "8333";
+	//物料编号Material
+	var d_MaterialFieldId = '8324'; 
+	
+	checkCustomize = function (){
+		//1.获取明细的行数
+		var indexnum0 = 0;
+		if(document.getElementById("indexnum0")){
+			indexnum0 = document.getElementById("indexnum0").value * 1.0 - 1;
+		}
+		for(var i=0;i<indexnum0+1;i++){
+			var CostCenter = jQuery("#field"+d_CostCenterFieldId +"_"+i).val();
+			var GLAccount = jQuery("#field"+d_GLAccountFieldId +"_"+i).val();
+			var Material = jQuery("#field"+d_MaterialFieldId +"_"+i).val();
+			//alert("CostCenter="+CostCenter+",GLAccount="+GLAccount+",Material="+Material);
+			if(CostCenter.length<=0){
+				alert("第"+(i+1)+"行明细，成本中心编号不得为空！");
+				return false;
+			}
+			if(GLAccount.length<=0){
+				alert("第"+(i+1)+"行明细，费用科目不得为空！");
+				return false;
+			}
+			if(Material.length<=0){
+				alert("第"+(i+1)+"行明细，物料编号不得为空！");
+				return false;
+			}
+		}
+		return true;
+	}
+})
+
+</script>

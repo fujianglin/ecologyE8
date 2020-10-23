@@ -1,0 +1,65 @@
+<script type="text/javascript">
+
+    jQuery(document).ready(function () {
+        //jQuery("#searchm").append("<input type='button' value='查询' name='searchbtn' onclick='search_sapjh(this)' id='searchbtn'/>");
+        jQuery("[name=addbutton0]").click(function(){
+        	jQuery("#oTable0").find("tr:last-child").find(".searchdt").append("<input type='button' value='查询' name='searchbtn' onclick='search_sapjh(this)' id='searchbtn'/>");
+        	jQuery("#oTable0").find("tr:last-child").find(".searchdt").find("input[type=text]").css("width","70%");
+                jQuery("#oTable0").find("tr:last-child").find(".searchdt").find("input[type=text]").attr("readonly","readonly");
+                jQuery("#oTable0").find("tr:last-child").find(".searchdt_desc").find("input[type=text]").attr("readonly","readonly");
+        })
+        
+        setTimeout(addSearch,1000);
+        
+    })
+    
+    function addSearch(){
+    	jQuery("#oTable0").find("[_target=datarow]").each(function(index,val){
+        	jQuery(val).find(".searchdt").append("<input type='button' value='查询' name='searchbtn' onclick='search_sapjh(this)' id='searchbtn'/>");
+        	jQuery(val).find(".searchdt").find("input[type=text]").css("width","70%");
+                jQuery(val).find(".searchdt").find("input[type=text]").attr("readonly","readonly");
+                jQuery(val).find(".searchdt_desc").find("input[type=text]").attr("readonly","readonly");
+        })
+    }
+
+
+    function search_sapjh(obj) {
+    	
+    	var index = jQuery(obj).parent().parent().attr("_rowindex");
+        var dialog = new window.top.Dialog();
+        dialog.currentWindow = window;
+        //dialog.callbackfunParam = null;
+        dialog.URL = "/systeminfo/BrowserMain.jsp?url=/formmode/apps/jiahe/SapBrowser.jsp?sapBrowserType=ProjectBudget";
+        dialog.callbackfun = function (paramobj, id1) {
+        	jQuery("#field6572_"+index).val(id1.wbscode);
+            //jQuery("#field6572_"+index+"span").html(id1.wbscode);
+        	jQuery("#field6715_"+index).val(id1.planAmountInGlobalCurrency);
+        	jQuery("#field7412_"+index).val(id1.actualAmountInGlobalCurrenc);
+        	jQuery("#field6717_"+index).val(id1.keyong);
+        	jQuery("#field7409_"+index).val(id1.WBSDescription);
+                jQuery("#field6572_"+index).trigger("change");
+
+                //jQuery("#field6572_"+index+"span").html(id1.wbscode);
+               jQuery("#field6715_"+index+"span").html(id1.planAmountInGlobalCurrency);
+        	jQuery("#field7412_"+index+"span").html(id1.actualAmountInGlobalCurrenc);
+        	jQuery("#field6717_"+index+"span").html(id1.keyong);
+        	//jQuery("#field7409_"+index+"span").html(id1.WBSDescription);
+
+        }
+        dialog.Title = "请选择";//请选择
+        dialog.Width = 800 ;
+        dialog.Height = 600;
+			dialog.Drag = true;
+            dialog.show();
+    }
+</script>
+
+
+
+
+
+
+
+
+
+

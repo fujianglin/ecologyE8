@@ -1,0 +1,51 @@
+<<script type="text/javascript">
+    jQuery(document).ready(function () {
+       
+
+        //jQuery("#searchm").append("<input type='button' value='查询' name='searchbtn' onclick='search(this)' id='searchbtn'/>");
+        jQuery("[name=addbutton0]").click(function(){
+               // console.log(jQuery("#oTable0").find("[_target=datarow]:last-child"));
+        	jQuery(jQuery("#oTable0 [_target=datarow]").get(jQuery("#oTable0 [_target=datarow]").length-1)).find(".searchdt").append("<input type='button' value='查询' name='searchbtn' onclick='search_spajh(this)' id='searchbtn'/>");
+        	jQuery(jQuery("#oTable0 [_target=datarow]").get(jQuery("#oTable0 [_target=datarow]").length-1)).find(".searchdt").find("input[type=text]").css("width","70%");
+                jQuery(jQuery("#oTable0 [_target=datarow]").get(jQuery("#oTable0 [_target=datarow]").length-1)).find(".searchdt").find("input[type=text]").attr("readonly","readonly");
+                jQuery(jQuery("#oTable0 [_target=datarow]").get(jQuery("#oTable0 [_target=datarow]").length-1)).find(".searchdt_desc").find("input[type=text]").attr("readonly","readonly");
+        })
+        
+        setTimeout(addSearch,1000);
+
+        
+    })
+    
+    function addSearch(){
+    	jQuery("#oTable0").find("[_target=datarow]").each(function(index,val){
+        	jQuery(val).find(".searchdt").append("<input type='button' value='查询' name='searchbtn' onclick='search_spajh(this)' id='searchbtn'/>");
+        	jQuery(val).find(".searchdt").find("input[type=text]").css("width","70%");
+                jQuery(val).find(".searchdt").find("input[type=text]").attr("readonly","readonly");
+                jQuery(val).find(".searchdt_desc").find("input[type=text]").attr("readonly","readonly");
+        })
+    }
+
+
+    function search_spajh(obj) {
+    	
+    	var index = jQuery(obj).parent().parent().attr("_rowindex");
+        var dialog = new window.top.Dialog();
+        dialog.currentWindow = window;
+        //dialog.callbackfunParam = null;
+        dialog.URL = "/systeminfo/BrowserMain.jsp?url=/formmode/apps/jiahe/SapBrowser.jsp?sapBrowserType=PurchaseOrder";
+        dialog.callbackfun = function (paramobj, id1) {
+        	jQuery("#field6775_"+index).val(id1.PurchaseOrder);
+        	jQuery("#field6776_"+index).val(id1.ConditionAmount);
+               jQuery("#field6775_"+index).trigger("change");
+               jQuery("#field6776_"+index).trigger("change");
+
+        }
+        dialog.Title = "请选择";//请选择
+        dialog.Width = 800 ;
+        dialog.Height = 600;
+			dialog.Drag = true;
+            dialog.show();
+    }
+</script>
+
+
